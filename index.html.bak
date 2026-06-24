@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Vidaa - SmartOne APP</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <meta name="viewport" content="width=1280,initial-scale=1,maximum-scale=1" />
+    <meta name="robots" content="noindex">
+    <style>
+        .splash-screen {
+            background-image: url('http://smartonecdn.com/img/splash_1920X1080.png') !important;
+            background-size: cover !important;
+        }
+    </style>
+    <script>
+        var host = '';
+        var subdomain = 'vidaa'; //String(/:\/\/([^\/]+)/.exec(window.location.href)[1].split('.')[0] || window.location.host.split('.')[0]); // 
+        /*define object that will wrap our logic*/
+        var ScriptLoader = {
+            Stop: false,
+
+            LoadFile: function(url, type, callback) {
+                var self = this;
+                if (this.Stop) {
+                    return false;
+                }
+
+                var link = url + type + '?v=' + Date.now();
+
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            if (type === 'js') self.AddScript(xhr.responseText, callback);
+                            if (type === 'css') self.AddCss(link, callback);
+                        } else {
+                            console.error('error loading' + link);
+                            if (console) console.error(xhr.statusText);
+                        }
+                    }
+                };
+                xhr.open("GET", link, false); /*last parameter defines if call is async or not*/
+                xhr.send(null);
+            },
+
+            AddScript: function(code, callback) {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.textContent = code;
+                if (callback) {
+                    this.loadConfig();
+                }
+
+                document.getElementsByTagName("head")[0].appendChild(script);
+            },
+
+            AddCss: function(url, callback) {
+                var link = document.createElement("link");
+                link.type = 'text/css';
+                link.rel = 'stylesheet';
+                link.href = url;
+
+                document.getElementsByTagName("head")[0].appendChild(link);
+            },
+
+            loadConfig: function() {
+                var device = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+                $(document).ready(function() {
+                    if (typeof CONFIG !== 'undefined') {
+                        CONFIG[device] = true;
+                    }
+                });
+            },
+        };
+        // Globals
+        ScriptLoader.LoadFile(host + atob('anMvanF1ZXJ5Lg=='), 'js'); // js/jquery.
+        ScriptLoader.LoadFile(host + atob('anMvYm9vdHN0cmFwLmJ1bmRsZS5taW4u'), 'js', 'true'); // js/bootstrap.bundle.min.
+        // CSS
+        ScriptLoader.LoadFile(host + atob('Y3NzL2Jvb3RzdHJhcC5taW4u'), 'css'); // css/bootstrap.min.
+        ScriptLoader.LoadFile(host + atob('Y3NzL2ltcG9ydC4='), 'css'); // css/import.
+        ScriptLoader.LoadFile(host + atob('Y3NzL2dsb2JhbC5taW4u'), 'css'); // css/global.min.
+        // Javascripts
+        ScriptLoader.LoadFile(host + atob('anMvaW1wb3J0Lg=='), 'js'); // js/import.
+        ScriptLoader.LoadFile(host + atob('anMvY29uZmlnLg=='), 'js'); // js/config.
+        ScriptLoader.LoadFile(host + atob('anMvc291cmNlLm1pbi4=') + subdomain + '.', 'js'); // js/source.min.zeasnetcast.
+        ScriptLoader.LoadFile(host + atob('anMvYXBwLm1pbi4='), 'js'); // js/app.min.
+    </script>
+</head>
+
+<body id="colortheme">
+    <div class="container-fluid" id="viewport">
+        <div id="scene-splashscreen" class="scene splash-screen">
+            <div class="title" data-i18n="splashscreen_title"></div>
+        </div>
+    </div>
+</body>
+
+</html>

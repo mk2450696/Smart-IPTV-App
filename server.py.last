@@ -1,0 +1,169 @@
+import subprocess
+import os
+import json
+import requests
+import re
+import time
+from flask import Flask, request, Response, stream_with_context, redirect, jsonify
+
+app = Flask(__name__)
+
+# --- CONFIG ---
+FFMPEG_PATH = "ffmpeg"
+FFPROBE_PATH = "ffprobe"
+
+# CREDENTIALS
+OS_API_KEY = "oKhrXoAVjqjJuYgd2zbH62WTag88mZDq" 
+NET_FLAGS = ['-user_agent', 'VLC/3.0.18 LibVLC/3.0.18', '-reconnect', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '10']
+
+# --- CORS ---
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    return response
+
+@app.after_request
+def after_request(response):
+    return add_cors_headers(response)
+
+# --- PROBE LOGIC (DEBUG MODE) ---
+def get_stream_info(url):
+    info = {'codec': 'unknown', 'is_dolby': False}
+    
+    print(f"🕵️ STARTING PROBE...")
+    start_clock = time.time()
+    
+    try:
+        cmd = [
+            FFPROBE_PATH, '-v', 'quiet', '-print_format', 'json', 
+            '-show_streams', '-select_streams', 'v:0', 
+            *NET_FLAGS, 
+            '-probesize', '5000000', '-analyzeduration', '5000000', 
+            url
+        ]
+        
+        # INCREASED TIMEOUT to 25 SECONDS
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=25)
+        
+        end_clock = time.time()
+        duration = end_clock - start_clock
+        print(f"⏱️ PROBE TIME: {duration:.2f}s")
+        
+        data = json.loads(result.stdout)
+        
+        for s in data.get('streams', []):
+            info['codec'] = s.get('codec_name', 'unknown').lower()
+            
+            tag = s.get('codec_tag_string', '')
+            if 'dvh' in tag or 'dvhe' in tag: info['is_dolby'] = True
+            
+            for side in s.get('side_data_list', []):
+                st = side.get('side_data_type', '')
+                if 'DOVI' in st or 'dolby' in st.lower(): info['is_dolby'] = True
+        
+        return info
+
+    except subprocess.TimeoutExpired:
+        print(f"⚠️ PROBE TIMED OUT (25s) - Server too slow")
+        return info 
+    except Exception as e:
+        print(f"⚠️ PROBE ERROR: {e}")
+        return info
+
+# --- ROUTE: STREAM ---
+@app.route('/stream_ts')
+def stream_ts():
+    url = request.args.get('url')
+    start_time = request.args.get('start', '0')
+    if not url: return "Missing URL", 400
+
+    if start_time == '0':
+        info = get_stream_info(url)
+        print(f"🚦 RESULT: Codec={info['codec']} | Dolby={info['is_dolby']}")
+
+        if info['is_dolby']:
+            print(f"↪️ REDIRECTING (Dolby Native)")
+            return redirect(url, code=302)
+        
+        if info['codec'] == 'h264':
+            print(f"↪️ REDIRECTING (H.264 Native)")
+            return redirect(url, code=302)
+
+        print(f"⚙️ PROXYING (HEVC/Unknown)")
+
+    cmd = [
+        FFMPEG_PATH, *NET_FLAGS, '-ss', start_time, '-i', url,
+        '-map', '0:v', '-map', '0:a', '-sn',
+        '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ac', '2',
+        '-map_metadata', '0',
+        '-probesize', '5000000', '-analyzeduration', '5000000',
+        '-flush_packets', '1', '-fflags', '+genpts+igndts',
+        '-f', 'mpegts', '-'
+    ]
+
+    def generate():
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        try:
+            while True:
+                data = proc.stdout.read(4096*10)
+                if not data: break
+                yield data
+        except: proc.terminate()
+        finally: proc.terminate()
+
+    return Response(stream_with_context(generate()), mimetype='video/MP2T')
+
+# --- ROUTE: METADATA ---
+@app.route('/get_meta')
+def get_meta():
+    url = request.args.get('url')
+    if not url: return jsonify({'error': 'No URL'}), 400
+    try:
+        cmd = [FFPROBE_PATH, '-v', 'quiet', '-print_format', 'json', '-show_format', *NET_FLAGS, url]
+        # Matches Probe Timeout
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=25)
+        data = json.loads(result.stdout)
+        duration = float(data['format']['duration'])
+        return jsonify({'duration': duration})
+    except: return jsonify({'duration': 0})
+
+# --- SUBTITLES (UNCHANGED) ---
+def parse_raw_title(raw):
+    clean = raw.strip()
+    season, episode = None, None
+    se_match = re.search(r'[Ss](\d+)\s*[EeXx](\d+)', clean)
+    if se_match:
+        season = int(se_match.group(1)); episode = int(se_match.group(2))
+    title = clean
+    year_match = re.search(r'(.*?)[\(\[](\d{4})[\)\]]', clean)
+    if year_match: title = year_match.group(1).strip()
+    elif se_match: title = clean[:se_match.start()].strip()
+    title = re.sub(r'^.*?- ', '', title).strip(' -')
+    return title, season, episode
+
+@app.route('/search_subs')
+def search_subs():
+    raw_name = request.args.get('raw_name', '')
+    lang = request.args.get('lang', 'en')
+    index = int(request.args.get('index', '0'))
+    headers = {"Api-Key": OS_API_KEY, "User-Agent": "MyHomeIPTV v1.0"}
+    title, season, episode = parse_raw_title(raw_name)
+    print(f"🔎 SEARCHING: {title} S{season}E{episode} [{lang}] #{index+1}")
+    params = {"query": title, "languages": lang, "order_by": "votes", "order_direction": "desc"}
+    if season and episode: params["season_number"] = season; params["episode_number"] = episode
+    try:
+        r = requests.get("https://api.opensubtitles.com/api/v1/subtitles", params=params, headers=headers)
+        data = r.json()
+        if data.get('total_count', 0) > index:
+            fid = data['data'][index]['attributes']['files'][0]['file_id']
+            dl_r = requests.post("https://api.opensubtitles.com/api/v1/download", json={"file_id": fid}, headers=headers)
+            if dl_r.status_code == 200:
+                raw_srt = requests.get(dl_r.json().get('link')).text
+                vtt = "WEBVTT\n\n" + raw_srt.replace(',', '.')
+                return Response(vtt, mimetype='text/vtt')
+    except Exception as e: print(e)
+    return Response("WEBVTT\n\nNOTE No subtitles found", mimetype='text/vtt')
+
+if __name__ == '__main__':
+    print("🚀 SERVER V16 (DEBUG TIMER + 25s TIMEOUT) RUNNING on Port 5000")
+    app.run(host='0.0.0.0', port=5000, threaded=True)

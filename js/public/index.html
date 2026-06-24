@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update LayerSevenTV Credentials</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #222;
+            color: white;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+        input, button {
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 20px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        input:focus, button:focus {
+            background-color: #555;
+            outline: 3px solid #4CAF50;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        #returnButton {
+            background-color: #444;
+        }
+        #returnButton:focus {
+            outline: 3px solid #4CAF50;
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update LayerSevenTV Credentials</h1>
+
+    <form action="/update-credentials" method="POST" id="credForm">
+        <input type="text" name="username" placeholder="Username" required autofocus>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <button id="returnButton" onclick="window.location.href='https://amirjg.github.io/IPTV/'">
+        Return to Main Menu
+    </button>
+
+    <script>
+        // Collect all focusable elements in order
+        const focusable = Array.from(document.querySelectorAll('input, button'));
+        let index = 0;
+        focusable[index].focus();
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowDown':
+                    index = (index + 1) % focusable.length;
+                    focusable[index].focus();
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                    index = (index - 1 + focusable.length) % focusable.length;
+                    focusable[index].focus();
+                    e.preventDefault();
+                    break;
+                case 'Enter': // OK button on remote
+                    if (document.activeElement.tagName === 'BUTTON') {
+                        document.activeElement.click();
+                    }
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

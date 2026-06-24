@@ -1,0 +1,6 @@
+# Ignore virtual environments and logs
+venv/
+*.log
+__pycache__/
+
+# We specifically WANT the cloud_profile to upload, so we DON'T ignore it!

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: #4CAF50;
+        }
+        button {
+            width: 320px;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+        }
+        button:focus {
+            outline: 3px solid #4CAF50;
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>✅ LayerSevenTV credentials updated successfully!</h1>
+
+    <button onclick="window.location.href='https://amirjg.github.io/IPTV/'">Return to Main Menu</button>
+    <button onclick="window.location.href='http://192.168.70.2:3001'">Open SmartOne IPTV Player</button>
+
+    <script>
+        // TV remote navigation
+        const focusable = Array.from(document.querySelectorAll('button'));
+        let index = 0;
+        focusable[index].focus();
+
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowDown':
+                    index = (index + 1) % focusable.length;
+                    focusable[index].focus();
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                    index = (index - 1 + focusable.length) % focusable.length;
+                    focusable[index].focus();
+                    e.preventDefault();
+                    break;
+                case 'Enter': // OK button
+                    focusable[index].click();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

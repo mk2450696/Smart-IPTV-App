@@ -1,0 +1,1363 @@
+/**
+ * App name: SmartOneApp
+ * App version: 1.0.2
+ * Author: SmartOne, NH
+ * Build: 06-12-2025 12:37
+ **/
+var CONFIG = {
+    locale: "EN",
+    theme: "light",
+    epg: "enable",
+    time: 0,
+    player_skin: "flex",
+    player_type: "native",
+    aspect_ratio: "original",
+    parental_lock: "disable",
+    buffer_size: "default",
+    default_audio: "default",
+    default_live_format: "ts",
+    default_subtitle: "off",
+    subtitle_size: "standard",
+    subtitle_color: "white",
+    subtitle_background: "off",
+    subtitle_transparency: 0,
+    hide_live: "show",
+    hide_vod: "show",
+    hide_serie: "show",
+    hide_timeshift: "show",
+    hide_reload: "show",
+    hide_radio: "show",
+    hide_matchday: "show",
+    hide_boxoffice: "show",
+    hide_weather: "show",
+    parser_type: "remote",
+    opacity_list: 80,
+    user_agent: "auto",
+    sort_live: "default",
+    sort_vod: "newest",
+    sort_serie: "newest",
+    sort_timeshift: "newest",
+    sort_radio: "default",
+    sort_matchday: "newest",
+    sort_boxoffice: "default",
+    offline: 3,
+    report_screen: !0,
+    tmdb_api: "1c9c28413592640ac3b8d41b28a1c15d",
+    subtitle_api: "THVTZgdZ2yzdJ5KKNMIBSV38uFjj7ZIA",
+    force_tmdb: "enable",
+    force_https: "disable",
+    force_subtitles: "disable",
+    epg_source: "provider",
+    epg_lang: "auto",
+    last_watched: 14,
+    vod_cover: "http://smartonecdn.com/img/backgrounds/background_cover.jpg",
+    icon_live: "http://smartonecdn.com/img/icons/icon_live.png",
+    icon_radio: "http://smartonecdn.com/img/icons/icon_radio.png",
+    icon_team: "http://smartonecdn.com/img/icons/icon_team.png",
+    icon_profile: "http://smartonecdn.com/img/icons/icon_profile.svg",
+    icon_weather: "http://smartonecdn.com/img/icons/icon_weather.png",
+    background_radio: "http://smartonecdn.com/img/backgrounds/background_radio.jpg",
+    background_vod: "http://smartonecdn.com/img/backgrounds/background_vod.jpg",
+    background_cover: "http://smartonecdn.com/img/backgrounds/background_cover.jpg",
+    server_license: "f2f666e694475676f25637e6563696c6f556369667275637f2d6f636e25637e6563696c656e6f6472716d637e24367f2f2a307474786",
+    server_service: "f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    server_demo: "f2875646e696f2f6d65646f556369667275637f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    server_privacy: "973696c6f607d297361667962707f2d6f636e267470796d256e6f6472716d637f2f2a33707474786",
+    server_dmca: "973696c6f607d21636d646f2d6f636e267470796d256e6f6472716d637f2f2a33707474786",
+    server_playlist: "5647162756e65676f5e69616d6f256e6f6f5472716d637f2e6967657c607f2d6f636e267470796d256e6f6472716d637f2f2a33707474786",
+    server_storage: "f2d6f636e2e61657f647564796c656e25667962746f2f2a33707474786",
+    parser_m3u: "078607e2275637271607f55733d6f237c6f6f647f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    parser_epg: "078607e2275637271607f5760756f237c6f6f647f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    api_epg: "760754863627165637f2960716f2d6f636e2760756475676f2f2a307474786",
+    proxy_sofascore: "078607e25627f636371666f637f59787f62707f237c6f6f647f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    proxy_stalker: "078607e22756b6c6164737f59787f62707f237c6f6f647f2d6f636e267470796d256e6f6472716d637e276e69637e6563696c6f2f2a307474786",
+    license_renew: "f25647166796473616f5e69616d6f256e6f6f5472716d637f2e6967657c607f2d6f636e267470796d256e6f6472716d637f2f2a33707474786",
+    license_server: "f2f666e694475676f25637e6563696c6f556369667275637f2d6f636e25637e6563696c656e6f6472716d637e24367f2f2a307474786",
+    license_transfer: "f2875646e696f227566637e6162747f5e69616d6f256e6f6f5472716d637f2e6967657c607f2d6f636e267470796d256e6f6472716d637f2f2a33707474786",
+    sdk_version: "2.0.225 [02.03.2019]",
+    version: "4.1.0 [24.09.2024]",
+    versionSDK: "4.3.7 [01.12.2025]",
+    version_core: "4.1.0 [24.09.2024]",
+    version_app: "4.3.7 [01.12.2025]",
+    developer: {
+        debug: !1,
+        active: !1,
+        console: null
+    },
+    "debugger": {
+        remote: !1,
+        only_errors: !1
+    },
+    ajax: {
+        timeout: 12e4,
+        cache: !0
+    },
+    regex_title: [/[\(\|\[].*?[\)\|\]]/g, /-\s?[\d+]+/g, /^(HD|FHD|SD|webcam|1080p|netflix|hdcam|m1080p|HEVC) :/i, / (HD|FHD|SD|webcam|1080p|netflix|hdcam|m1080p|HEVC|4k|CAM)$/i, / (HD|FHD|SD|webcam|1080p|netflix|hdcam|m1080p|HEVC|4k) /i, / [\d+]{4}$/, /(S[\d\.\-\_]+\s?E[\d\.\-\_]+).*/i, /episode\s?[\d\.\-\_]+$/i, /((_|-)P(S|D)\s?\*?).*/i, /^[a-zA-Z]{2}[_\-|]\s/i, /^[a-zA-Z]{2}\s?[_\-|]\s/i, /^[A-Z]{2}\s/, /^\u0641\u064a\u0644\u0645\s/, /VOSTFR/g, /[|]\s?(Tamil|Telugu|Malyalam|Kannada|Multi Audio)$/i, /[\d+]{4}-[a-zA-Z]{2}$/, /(-|_|\\)/g, /\s{2}/g, /\s[A-Z]{2}\s[A-Z]{2}\s?$/, /\s[A-Z]{2}\s?$/g],
+    regex_serie: [/(S[\d\.\-\_]+\s?E[\d\.\-\_]+).*/i, /episode\s?[\d\.\-\_]+$/i],
+    regex_year: [/\(([\d]+)\)/, /\[([\d]+)\]/, /- ([\d+]+)/],
+    regex_language: [/(^[_\-|:]?[a-zA-Z]{2}[_\-|:]\s)+/i, /(^[a-zA-Z]{2}\s?[_\-|:]\s)+/i, /(^[A-Z]{2}\s)+/],
+    ping_servers: ["http://usa1.speedtest.observer/"],
+    radio_servers: ["http://fi1.api.radio-browser.info/", "http://de2.api.radio-browser.info/"],
+    GA: {
+        account: "G-9T5QKEYHVX",
+        app_name: "SmartOne APP",
+        timeout: 3e3,
+        ssl: !1
+    },
+    mainMenu: [{
+        id: "reload",
+        icon: "fas fa-sync fa-2x",
+        name: "btn_reload"
+    }, {
+        id: "settings",
+        icon: "fas fa-cog fa-2x",
+        name: "btn_settings"
+    }, {
+        id: "live",
+        icon: "fas fa-tv fa-2x",
+        name: "btn_live"
+    }, {
+        id: "vod",
+        icon: "fas fa-film fa-2x",
+        name: "btn_vod"
+    }, {
+        id: "serie",
+        icon: "fas fa-photo-video fa-2x",
+        name: "btn_serie"
+    }, {
+        id: "timeshift",
+        icon: "fas fa-history fa-2x",
+        name: "btn_timeshift"
+    }, {
+        id: "radio",
+        icon: "fas fa-broadcast-tower fa-2x",
+        name: "btn_radio"
+    }, {
+        id: "matchday",
+        icon: "far fa-futbol fa-2x",
+        name: "btn_matchday"
+    }, {
+        id: "boxoffice",
+        icon: "fas fa-ticket-alt fa-2x",
+        name: "btn_boxoffice"
+    }],
+    listNavigation: [{
+        id: "close",
+        icon_class: '<i class="fas fa-times"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_close",
+        badge_class: "badge-dark"
+    }, {
+        id: "categories",
+        icon_class: '<i class="fas fa-list-ul"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_groups",
+        badge_class: "badge-primary"
+    }, {
+        id: "sort",
+        icon_class: '<i class="fas fa-sort-alpha-up"></i>',
+        css_class: "btn btn-outline-dark focusable",
+        name: "btn_sort",
+        badge_class: "badge-info"
+    }, {
+        id: "search",
+        icon_class: '<i class="fas fa-search"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_search",
+        badge_class: "badge-warning"
+    }, {
+        id: "lock",
+        icon_class: '<i class="fas fa-lock"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_lock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "unlock",
+        icon_class: '<i class="fas fa-lock-open"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_unlock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "reload",
+        icon_class: '<i class="fas fa-sync"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_reload",
+        badge_class: "badge-success"
+    }, {
+        id: "prev_page",
+        icon_class: '<i class="fas fa-angle-left"></i>',
+        css_class: "btn btn-outline-dark focusable",
+        name: "btn_prev",
+        badge_class: "badge-dark"
+    }, {
+        id: "next_page",
+        icon_class: '<i class="fas fa-angle-right"></i>',
+        css_class: "btn btn-outline-dark focusable",
+        name: "btn_next",
+        badge_class: "badge-dark"
+    }, {
+        id: "home",
+        icon_class: '<i class="fas fa-home"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_home",
+        badge_class: "badge-danger"
+    }],
+    gridNavigation: [{
+        id: "",
+        icon_class: "",
+        css_class: "btn btn-info pagination",
+        name: "",
+        badge_class: "badge-dark"
+    }, {
+        id: "categories",
+        icon_class: '<i class="fas fa-list-ul"></i>',
+        css_class: "btn btn-outline-primary focusable",
+        name: "btn_groups",
+        badge_class: "badge-primary"
+    }, {
+        id: "sort",
+        icon_class: '<i class="fas fa-sort-alpha-up"></i>',
+        css_class: "btn btn-outline-info focusable",
+        name: "btn_sort",
+        badge_class: "badge-info"
+    }, {
+        id: "search",
+        icon_class: '<i class="fas fa-search"></i>',
+        css_class: "btn btn-outline-warning focusable",
+        name: "btn_search",
+        badge_class: "badge-warning"
+    }, {
+        id: "lock",
+        icon_class: '<i class="fas fa-lock"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_lock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "unlock",
+        icon_class: '<i class="fas fa-lock-open"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_unlock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "reload",
+        icon_class: '<i class="fas fa-sync"></i>',
+        css_class: "btn btn-outline-success focusable",
+        name: "btn_reload",
+        badge_class: "badge-success"
+    }, {
+        id: "first_page",
+        icon_class: '<i class="fas fa-step-backward"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_first",
+        badge_class: "badge-dark"
+    }, {
+        id: "prev_page",
+        icon_class: '<i class="fas fa-angle-left"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_prev",
+        badge_class: "badge-dark"
+    }, {
+        id: "next_page",
+        icon_class: '<i class="fas fa-angle-right"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_next",
+        badge_class: "badge-dark"
+    }, {
+        id: "last_page",
+        icon_class: '<i class="fas fa-step-forward"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_last",
+        badge_class: "badge-dark"
+    }, {
+        id: "home",
+        icon_class: '<i class="fas fa-home"></i>',
+        css_class: "btn btn-outline-danger focusable",
+        name: "btn_home",
+        badge_class: "badge-danger"
+    }],
+    categoriesNavigation: [{
+        id: "close",
+        icon_class: '<i class="fas fa-times"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_close",
+        badge_class: "badge-dark"
+    }, {
+        id: "sort",
+        icon_class: '<i class="fas fa-sort-alpha-up"></i>',
+        css_class: "btn btn-outline-dark focusable",
+        name: "btn_sort",
+        badge_class: "badge-info"
+    }, {
+        id: "search",
+        icon_class: '<i class="fas fa-search"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_search",
+        badge_class: "badge-warning"
+    }, {
+        id: "lock",
+        icon_class: '<i class="fas fa-lock"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_lock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "unlock",
+        icon_class: '<i class="fas fa-lock-open"></i>',
+        css_class: "btn btn-outline-secondary focusable",
+        name: "btn_unlock",
+        badge_class: "badge-secondary"
+    }, {
+        id: "reload",
+        icon_class: '<i class="fas fa-sync"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_reload",
+        badge_class: "badge-success"
+    }, {
+        id: "prev_page",
+        icon_class: '<i class="fas fa-angle-left"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_prev",
+        badge_class: "badge-dark"
+    }, {
+        id: "next_page",
+        icon_class: '<i class="fas fa-angle-right"></i>',
+        css_class: "btn btn-outline-light focusable",
+        name: "btn_next",
+        badge_class: "badge-dark"
+    }, {
+        id: "home",
+        icon_class: '<i class="fas fa-home"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_home",
+        badge_class: "badge-danger"
+    }],
+    episodeStreamsNavigation: [{
+        id: "close",
+        icon_class: '<i class="fas fa-times"></i>',
+        css_class: "btn btn-outline-dark",
+        name: "btn_close",
+        char_word: "A",
+        badge_class: "badge-dark"
+    }, {
+        id: "seasons",
+        icon_class: '<i class="fas fa-list-ul"></i>',
+        css_class: "btn btn-outline-primary",
+        name: "btn_seasons",
+        char_word: "D",
+        badge_class: "badge-primary"
+    }, {
+        id: "home",
+        icon_class: '<i class="fas fa-undo"></i>',
+        css_class: "btn btn-outline-danger",
+        name: "btn_return",
+        char_word: "D",
+        badge_class: "badge-danger"
+    }],
+    settingsMenu: [{
+        id: "accounts",
+        icon_class: "fas fa-list fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "settings_accounts"
+    }, {
+        id: "setup",
+        icon_class: "fas fa-cogs fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "settings_setup"
+    }, {
+        id: "about",
+        icon_class: "fas fa-info-circle fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "settings_about"
+    }, {
+        id: "device",
+        icon_class: "fas fa-desktop fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "settings_device"
+    }, {
+        id: "reload",
+        icon_class: "fas fa-sync fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "btn_reload"
+    }, {
+        id: "tools",
+        icon_class: "fas fa-tools fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "btn_tools"
+    }, {
+        id: "return",
+        icon_class: "fas fa-undo fa-2x",
+        css_class: "btn btn-outline-danger",
+        name: "btn_return"
+    }],
+    settingsSetup: [{
+        id: "application",
+        icon_class: "fas fa-cog fa-1x",
+        name: "settings_setup_application",
+        callback: "settingsSetupApplication"
+    }, {
+        id: "player",
+        icon_class: "fas fa-play fa-1x",
+        name: "settings_setup_player",
+        callback: "settingsSetupPlayer"
+    }, {
+        id: "subtitle_settings",
+        icon_class: "fas fa-closed-captioning fa-1x",
+        name: "settings_setup_subtitle_settings",
+        callback: "settingsSetupSubtitleSettings"
+    }, {
+        id: "hide_sections",
+        icon_class: "fas fa-eye-slash fa-1x",
+        name: "settings_setup_hide_sections",
+        callback: "settingsSetupHideSections"
+    }, {
+        id: "hide_categories",
+        icon_class: "fas fa-video-slash fa-1x",
+        name: "settings_setup_hide_categories",
+        callback: "settingsSetupHideCategories"
+    }, {
+        id: "sort_sections",
+        icon_class: "fas fa-sort-alpha-up fa-1x",
+        name: "settings_setup_sort",
+        callback: "settingsSetupSort"
+    }, {
+        id: "time",
+        icon_class: "fas fa-clock fa-1x",
+        name: "settings_setup_time",
+        callback: "settingsSetupTime"
+    }, {
+        id: "epg",
+        icon_class: "fas fa-calendar fa-1x",
+        name: "settings_setup_epg",
+        callback: "settingsSetupEpg"
+    }, {
+        id: "parental_lock",
+        icon_class: "fas fa-user-lock fa-1x",
+        name: "settings_setup_parental_lock",
+        callback: "settingsSetupParentalLock"
+    }, {
+        id: "reset",
+        icon_class: "fas fa-eraser fa-1x",
+        name: "settings_setup_reset",
+        callback: "settingsSetupReset"
+    }],
+    settingsSetupApplication: [{
+        id: "locale",
+        icon_class: "fas fa-language fa-1x",
+        name: "settings_setup_locale"
+    }, {
+        id: "theme",
+        icon_class: "fas fa-palette fa-1x",
+        name: "settings_setup_theme"
+    }, {
+        id: "hide_weather",
+        icon_class: "fas fa-cloud-sun fa-1x",
+        name: "settings_setup_hide_weather"
+    }, {
+        id: "opacity_list",
+        icon_class: "fas fa-fill fa-1x",
+        name: "settings_setup_opacity_list"
+    }, {
+        id: "parser_type",
+        icon_class: "fas fa-briefcase-medical fa-1x",
+        name: "settings_setup_parser_type"
+    }, {
+        id: "force_tmdb",
+        icon_class: "fab fa-imdb fa-1x",
+        name: "settings_setup_force_tmdb"
+    }, {
+        id: "last_watched",
+        icon_class: "fas fa-eye fa-1x",
+        name: "settings_setup_last_watched"
+    }],
+    settingsSetupLocale: [{
+        id: "EN",
+        name: "settings_setup_locale_EN"
+    }, {
+        id: "AR",
+        name: "settings_setup_locale_AR"
+    }, {
+        id: "FR",
+        name: "settings_setup_locale_FR"
+    }, {
+        id: "ES",
+        name: "settings_setup_locale_ES"
+    }, {
+        id: "DE",
+        name: "settings_setup_locale_DE"
+    }, {
+        id: "IT",
+        name: "settings_setup_locale_IT"
+    }, {
+        id: "RU",
+        name: "settings_setup_locale_RU"
+    }, {
+        id: "TR",
+        name: "settings_setup_locale_TR"
+    }, {
+        id: "PT",
+        name: "settings_setup_locale_PT"
+    }, {
+        id: "BS",
+        name: "settings_setup_locale_BS"
+    }, {
+        id: "SV",
+        name: "settings_setup_locale_SV"
+    }, {
+        id: "RO",
+        name: "settings_setup_locale_RO"
+    }, {
+        id: "UK",
+        name: "settings_setup_locale_UK"
+    }, {
+        id: "PL",
+        name: "settings_setup_locale_PL"
+    }, {
+        id: "ID",
+        name: "settings_setup_locale_ID"
+    }, {
+        id: "NO",
+        name: "settings_setup_locale_NO"
+    }, {
+        id: "DA",
+        name: "settings_setup_locale_DA"
+    }, {
+        id: "NL",
+        name: "settings_setup_locale_NL"
+    }],
+    settingsSetupTheme: [{
+        id: "light",
+        name: "settings_setup_theme_light"
+    }, {
+        id: "dark",
+        name: "settings_setup_theme_dark"
+    }, {
+        id: "blue",
+        name: "settings_setup_theme_blue"
+    }, {
+        id: "brown",
+        name: "settings_setup_theme_brown"
+    }, {
+        id: "pink",
+        name: "settings_setup_theme_pink"
+    }, {
+        id: "green",
+        name: "settings_setup_theme_green"
+    }, {
+        id: "gray",
+        name: "settings_setup_theme_gray"
+    }, {
+        id: "red",
+        name: "settings_setup_theme_red"
+    }, {
+        id: "yellow",
+        name: "settings_setup_theme_yellow"
+    }, {
+        id: "orange",
+        name: "settings_setup_theme_orange"
+    }, {
+        id: "purple",
+        name: "settings_setup_theme_purple"
+    }],
+    settingsSetupSort: [{
+        id: "default",
+        name: "settings_setup_sort_default"
+    }, {
+        id: "newest",
+        name: "settings_setup_sort_newest"
+    }, {
+        id: "oldest",
+        name: "settings_setup_sort_oldest"
+    }, {
+        id: "atoz",
+        name: "settings_setup_sort_atoz"
+    }, {
+        id: "ztoa",
+        name: "settings_setup_sort_ztoa"
+    }],
+    settingsSetupPlayer: [{
+        id: "player_type",
+        icon_class: "fas fa-play-circle fa-1x",
+        name: "settings_setup_player_type"
+    }, {
+        id: "player_skin",
+        icon_class: "fas fa-object-group fa-1x",
+        name: "settings_setup_player_skin"
+    }, {
+        id: "aspect_ratio",
+        icon_class: "fas fa-expand-arrows-alt fa-1x",
+        name: "settings_setup_aspect_ratio"
+    }, {
+        id: "default_audio",
+        icon_class: "fas fa-audio-description fa-1x",
+        name: "settings_setup_default_audio"
+    }, {
+        id: "buffer_size",
+        icon_class: "fas fa-spinner fa-1x",
+        name: "settings_setup_buffer_size"
+    }, {
+        id: "default_live_format",
+        icon_class: "far fa-file-video fa-1x",
+        name: "settings_setup_default_live_format"
+    }, {
+        id: "user_agent",
+        icon_class: "fas fa-user-shield fa-1x",
+        name: "settings_setup_user_agent"
+    }],
+    settingsSetupPlayerType: [{
+        id: "native",
+        name: "settings_setup_player_type_native"
+    }, {
+        id: "web",
+        name: "settings_setup_player_type_web"
+    }],
+    settingsSetupPlayerSkin: [{
+        id: "default",
+        name: "settings_setup_player_skin_default"
+    }, {
+        id: "flex",
+        name: "settings_setup_player_skin_flex"
+    }],
+    settingsSetupAspectRatio: [{
+        id: "original",
+        name: "settings_setup_aspect_ratio_original"
+    }, {
+        id: "fullscreen",
+        name: "settings_setup_aspect_ratio_fullscreen"
+    }, {
+        id: "16_9",
+        name: "settings_setup_aspect_ratio_16_9"
+    }, {
+        id: "21_9",
+        name: "settings_setup_aspect_ratio_21_9"
+    }, {
+        id: "4_3",
+        name: "settings_setup_aspect_ratio_4_3"
+    }],
+    settingsSetupBufferSize: [{
+        id: "default",
+        name: "settings_setup_buffer_size_default"
+    }, {
+        id: "small",
+        name: "settings_setup_buffer_size_small"
+    }, {
+        id: "medium",
+        name: "settings_setup_buffer_size_medium"
+    }, {
+        id: "large",
+        name: "settings_setup_buffer_size_large"
+    }],
+    settingsSetupDefaultAudio: [{
+        id: "default",
+        name: "settings_setup_default_audio_default"
+    }],
+    settingsSetupSubtitleSettings: [{
+        id: "force_subtitles",
+        name: "settings_setup_force_subtitles",
+        icon_class: "far fa-closed-captioning fa-1x"
+    }, {
+        id: "default_subtitle",
+        name: "settings_setup_default_subtitle",
+        icon_class: "fas fa-language fa-1x"
+    }, {
+        id: "subtitle_size",
+        name: "settings_setup_subtitle_size",
+        icon_class: "fas fa-text-height fa-1x"
+    }, {
+        id: "subtitle_color",
+        name: "settings_setup_subtitle_color",
+        icon_class: "fas fa-paint-brush fa-1x"
+    }, {
+        id: "subtitle_background",
+        name: "settings_setup_subtitle_background",
+        icon_class: "fas fa-brush fa-1x"
+    }, {
+        id: "subtitle_transparency",
+        name: "settings_setup_subtitle_transparency",
+        icon_class: "fas fa-adjust fa-1x"
+    }],
+    settingsSetupDefaultSubtitle: [{
+        id: "off",
+        name: "settings_setup_default_subtitle_off"
+    }],
+    settingsSetupSubtitleSize: [{
+        id: "tiny",
+        name: "settings_setup_subtitle_size_tiny"
+    }, {
+        id: "small",
+        name: "settings_setup_subtitle_size_small"
+    }, {
+        id: "standard",
+        name: "settings_setup_subtitle_size_standard"
+    }, {
+        id: "large",
+        name: "settings_setup_subtitle_size_large"
+    }, {
+        id: "huge",
+        name: "settings_setup_subtitle_size_huge"
+    }],
+    settingsSetupSubtitleBackground: [{
+        id: "off",
+        name: "settings_setup_color_off"
+    }],
+    settingsSetupSubtitleColor: [{
+        id: "white",
+        name: "settings_setup_color_white"
+    }, {
+        id: "black",
+        name: "settings_setup_color_black"
+    }, {
+        id: "yellow",
+        name: "settings_setup_color_yellow"
+    }, {
+        id: "blue",
+        name: "settings_setup_color_blue"
+    }, {
+        id: "green",
+        name: "settings_setup_color_green"
+    }, {
+        id: "red",
+        name: "settings_setup_color_red"
+    }, {
+        id: "gray",
+        name: "settings_setup_color_gray"
+    }],
+    settingsSetupSubtitleTransparency: [{
+        id: "0",
+        name: "settings_setup_subtitle_transparency_0"
+    }, {
+        id: "10",
+        name: "settings_setup_subtitle_transparency_10"
+    }, {
+        id: "20",
+        name: "settings_setup_subtitle_transparency_20"
+    }, {
+        id: "30",
+        name: "settings_setup_subtitle_transparency_30"
+    }, {
+        id: "40",
+        name: "settings_setup_subtitle_transparency_40"
+    }, {
+        id: "50",
+        name: "settings_setup_subtitle_transparency_50"
+    }, {
+        id: "60",
+        name: "settings_setup_subtitle_transparency_60"
+    }, {
+        id: "70",
+        name: "settings_setup_subtitle_transparency_70"
+    }, {
+        id: "80",
+        name: "settings_setup_subtitle_transparency_80"
+    }, {
+        id: "90",
+        name: "settings_setup_subtitle_transparency_90"
+    }, {
+        id: "100",
+        name: "settings_setup_subtitle_transparency_100"
+    }],
+    settingsSetupForceSubtitles: [{
+        id: "enable",
+        name: "settings_setup_force_subtitles_enable"
+    }, {
+        id: "disable",
+        name: "settings_setup_force_subtitles_disable"
+    }],
+    settingsSetupHideSections: [{
+        id: "hide_live",
+        name: "settings_setup_hide_live",
+        icon_class: "fas fa-tv fa-1x"
+    }, {
+        id: "hide_vod",
+        name: "settings_setup_hide_vod",
+        icon_class: "fas fa-film fa-1x"
+    }, {
+        id: "hide_serie",
+        name: "settings_setup_hide_serie",
+        icon_class: "fas fa-photo-video fa-1x"
+    }, {
+        id: "hide_timeshift",
+        name: "settings_setup_hide_timeshift",
+        icon_class: "fas fa-history fa-1x"
+    }, {
+        id: "hide_radio",
+        name: "settings_setup_hide_radio",
+        icon_class: "fas fa-broadcast-tower fa-1x"
+    }, {
+        id: "hide_reload",
+        name: "settings_setup_hide_reload",
+        icon_class: "fas fa-sync fa-1x"
+    }, {
+        id: "hide_matchday",
+        name: "settings_setup_hide_matchday",
+        icon_class: "fas fa-futbol fa-1x"
+    }],
+    settingsSetupShowHide: [{
+        id: "show",
+        name: "settings_setup_show"
+    }, {
+        id: "hide",
+        name: "settings_setup_hide"
+    }],
+    settingsSetupTime: [{
+        id: "12",
+        name: "+12"
+    }, {
+        id: "11",
+        name: "+11"
+    }, {
+        id: "10",
+        name: "+10"
+    }, {
+        id: "9",
+        name: "+09"
+    }, {
+        id: "8",
+        name: "+08"
+    }, {
+        id: "7",
+        name: "+07"
+    }, {
+        id: "6",
+        name: "+06"
+    }, {
+        id: "5",
+        name: "+05"
+    }, {
+        id: "4",
+        name: "+04"
+    }, {
+        id: "3",
+        name: "+03"
+    }, {
+        id: "2",
+        name: "+02"
+    }, {
+        id: "1",
+        name: "+01"
+    }, {
+        id: "0",
+        name: "0"
+    }, {
+        id: "-1",
+        name: "-01"
+    }, {
+        id: "-2",
+        name: "-02"
+    }, {
+        id: "-3",
+        name: "-03"
+    }, {
+        id: "-4",
+        name: "-04"
+    }, {
+        id: "-5",
+        name: "-05"
+    }, {
+        id: "-6",
+        name: "-06"
+    }, {
+        id: "-7",
+        name: "-07"
+    }, {
+        id: "-8",
+        name: "-08"
+    }, {
+        id: "-9",
+        name: "-09"
+    }, {
+        id: "-10",
+        name: "-10"
+    }, {
+        id: "-11",
+        name: "-11"
+    }, {
+        id: "-12",
+        name: "-12"
+    }],
+    settingsSetupEpgTimezone: [{
+        id: "12",
+        name: "+12"
+    }, {
+        id: "11",
+        name: "+11"
+    }, {
+        id: "10",
+        name: "+10"
+    }, {
+        id: "9",
+        name: "+09"
+    }, {
+        id: "8",
+        name: "+08"
+    }, {
+        id: "7",
+        name: "+07"
+    }, {
+        id: "6",
+        name: "+06"
+    }, {
+        id: "5",
+        name: "+05"
+    }, {
+        id: "4",
+        name: "+04"
+    }, {
+        id: "3",
+        name: "+03"
+    }, {
+        id: "2",
+        name: "+2"
+    }, {
+        id: "1",
+        name: "+01"
+    }, {
+        id: "0",
+        name: "0"
+    }, {
+        id: "-1",
+        name: "-01"
+    }, {
+        id: "-2",
+        name: "-02"
+    }, {
+        id: "-3",
+        name: "-03"
+    }, {
+        id: "-4",
+        name: "-04"
+    }, {
+        id: "-5",
+        name: "-06"
+    }, {
+        id: "-7",
+        name: "-07"
+    }, {
+        id: "-8",
+        name: "-08"
+    }, {
+        id: "-9",
+        name: "-09"
+    }, {
+        id: "-10",
+        name: "-10"
+    }, {
+        id: "-11",
+        name: "-11"
+    }, {
+        id: "-12",
+        name: "-12"
+    }],
+    settingsSetupEpg: [{
+        id: "enable",
+        name: "settings_setup_epg_enable"
+    }, {
+        id: "disable",
+        name: "settings_setup_epg_disable"
+    }],
+    settingsSetupParentalLock: [{
+        id: "enable",
+        name: "settings_setup_parental_lock_enable"
+    }, {
+        id: "disable",
+        name: "settings_setup_parental_lock_disable"
+    }],
+    settingsSetupReset: [{
+        id: "reset_accounts",
+        name: "settings_setup_reset_accounts",
+        icon_class: "fas fa-list fa-1x"
+    }, {
+        id: "reset_data",
+        name: "settings_setup_reset_data",
+        icon_class: "fas fa-database fa-1x"
+    }, {
+        id: "reset_live_favoris",
+        name: "settings_setup_reset_live_favoris",
+        icon_class: "fas fa-tv fa-1x"
+    }, {
+        id: "reset_vod_favoris",
+        name: "settings_setup_reset_vod_favoris",
+        icon_class: "fas fa-film fa-1x"
+    }, {
+        id: "reset_serie_favoris",
+        name: "settings_setup_reset_serie_favoris",
+        icon_class: "fas fa-photo-video fa-1x"
+    }, {
+        id: "reset_radio_favoris",
+        name: "settings_setup_reset_radio_favoris",
+        icon_class: "fas fa-broadcast-tower fa-1x"
+    }, {
+        id: "reset_watched_live",
+        name: "settings_setup_reset_watched_live",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_watched_radio",
+        name: "settings_setup_reset_watched_radio",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_watched_vod",
+        name: "settings_setup_reset_watched_vod",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_watched_serie",
+        name: "settings_setup_reset_watched_serie",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_watching_vod",
+        name: "settings_setup_reset_watching_vod",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_watching_serie",
+        name: "settings_setup_reset_watching_serie",
+        icon_class: "fas fa-eye fa-1x"
+    }, {
+        id: "reset_all",
+        name: "settings_setup_reset_all",
+        icon_class: "fas fa-trash fa-1x"
+    }, {
+        id: "return",
+        name: "settings_setup_reset_return",
+        icon_class: "fas fa-undo fa-1x"
+    }],
+    settingsSetupLanguages: [{
+        id: "EN",
+        name: "settings_setup_locale_EN"
+    }, {
+        id: "AR",
+        name: "settings_setup_locale_AR"
+    }, {
+        id: "FR",
+        name: "settings_setup_locale_FR"
+    }, {
+        id: "ES",
+        name: "settings_setup_locale_ES"
+    }, {
+        id: "DE",
+        name: "settings_setup_locale_DE"
+    }, {
+        id: "IT",
+        name: "settings_setup_locale_IT"
+    }, {
+        id: "RU",
+        name: "settings_setup_locale_RU"
+    }, {
+        id: "TR",
+        name: "settings_setup_locale_TR"
+    }, {
+        id: "PT",
+        name: "settings_setup_locale_PT"
+    }, {
+        id: "BS",
+        name: "settings_setup_locale_BS"
+    }, {
+        id: "EL",
+        name: "settings_setup_locale_EL"
+    }],
+    settingsSetupParserType: [{
+        id: "remote",
+        name: "settings_setup_parser_type_remote"
+    }, {
+        id: "local",
+        name: "settings_setup_parser_type_local"
+    }],
+    settingsSetupOpacityList: [{
+        id: "0",
+        name: "settings_setup_opacity_list_0"
+    }, {
+        id: "10",
+        name: "settings_setup_opacity_list_10"
+    }, {
+        id: "20",
+        name: "settings_setup_opacity_list_20"
+    }, {
+        id: "30",
+        name: "settings_setup_opacity_list_30"
+    }, {
+        id: "40",
+        name: "settings_setup_opacity_list_40"
+    }, {
+        id: "50",
+        name: "settings_setup_opacity_list_50"
+    }, {
+        id: "60",
+        name: "settings_setup_opacity_list_60"
+    }, {
+        id: "70",
+        name: "settings_setup_opacity_list_70"
+    }, {
+        id: "80",
+        name: "settings_setup_opacity_list_80"
+    }, {
+        id: "90",
+        name: "settings_setup_opacity_list_90"
+    }, {
+        id: "100",
+        name: "settings_setup_opacity_list_100"
+    }],
+    settingsSetupHideSections: [{
+        id: "hide_live",
+        name: "settings_setup_hide_live",
+        icon_class: "fas fa-tv fa-1x"
+    }, {
+        id: "hide_vod",
+        name: "settings_setup_hide_vod",
+        icon_class: "fas fa-film fa-1x"
+    }, {
+        id: "hide_serie",
+        name: "settings_setup_hide_serie",
+        icon_class: "fas fa-photo-video fa-1x"
+    }, {
+        id: "hide_timeshift",
+        name: "settings_setup_hide_timeshift",
+        icon_class: "fas fa-history fa-1x"
+    }, {
+        id: "hide_radio",
+        name: "settings_setup_hide_radio",
+        icon_class: "fas fa-broadcast-tower fa-1x"
+    }, {
+        id: "hide_reload",
+        name: "settings_setup_hide_reload",
+        icon_class: "fas fa-sync fa-1x"
+    }, {
+        id: "hide_matchday",
+        name: "settings_setup_hide_matchday",
+        icon_class: "fas fa-futbol fa-1x"
+    }],
+    settingsSetupUserAgent: [{
+        id: "auto",
+        name: "settings_setup_user_agent_auto"
+    }, {
+        id: "playlist",
+        name: "settings_setup_user_agent_playlist"
+    }, {
+        id: "app",
+        name: "settings_setup_user_agent_app"
+    }, {
+        id: "disable",
+        name: "settings_setup_user_agent_disable"
+    }],
+    settingsSetupForceTmdb: [{
+        id: "enable",
+        name: "settings_setup_force_tmdb_enable"
+    }, {
+        id: "disable",
+        name: "settings_setup_force_tmdb_disable"
+    }],
+    settingsSetupLastWatched: [{
+        id: 21,
+        name: "settings_setup_last_watched_21"
+    }, {
+        id: 14,
+        name: "settings_setup_last_watched_14"
+    }, {
+        id: 7,
+        name: "settings_setup_last_watched_7"
+    }, {
+        id: "disable",
+        name: "settings_setup_last_watched_disable"
+    }],
+    settingsTools: [{
+        id: "remote_keys",
+        icon_class: "fas fa-keyboard fa-1x",
+        name: "settings_setup_remote_keys",
+        callback: "settingsSetupKeys"
+    }, {
+        id: "tests",
+        icon_class: "fas fa-tasks fa-1x",
+        name: "settings_setup_tests",
+        callback: "settingsSetupTests"
+    }, {
+        id: "transfer",
+        icon_class: "fas fa-exchange-alt fa-1x",
+        name: "settings_setup_transfer",
+        callback: "settingsSetupTransfer"
+    }, {
+        id: "speedtest",
+        icon_class: "fas fa-tachometer-alt fa-1x",
+        name: "settings_setup_speedtest",
+        callback: "settingsSetupSpeedTest"
+    }, {
+        id: "vpn",
+        icon_class: "fab fa-connectdevelop fa-1x",
+        name: "settings_setup_vpn",
+        callback: "settingsSetupVpn"
+    }, {
+        id: "import_data",
+        icon_class: "fas fa-cloud-upload-alt fa-1x",
+        name: "settings_setup_import_data",
+        callback: "settingsSetupImportData"
+    }, {
+        id: "export_data",
+        icon_class: "fas fa-cloud-download-alt fa-1x",
+        name: "settings_setup_export_data",
+        callback: "settingsSetupExportData"
+    }],
+    mandatoryKeys: [{
+        key_id: "UP",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-arrow-up"></i>'
+    }, {
+        key_id: "LEFT",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-arrow-left"></i>'
+    }, {
+        key_id: "RIGHT",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-arrow-right"></i>'
+    }, {
+        key_id: "DOWN",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-arrow-down"></i>'
+    }, {
+        key_id: "ENTER",
+        card_md: "col-md-2",
+        header_class: "",
+        name: "ENTER"
+    }, {
+        key_id: "RETURN",
+        card_md: "col-md-2",
+        header_class: "",
+        name: "RETURN"
+    }],
+    colorsKeys: [{
+        key_id: "RED",
+        card_md: "col-md-3",
+        header_class: "bg-danger",
+        name: '<i class="fas fa-genderless"></i>'
+    }, {
+        key_id: "GREEN",
+        card_md: "col-md-3",
+        header_class: "bg-success",
+        name: '<i class="fas fa-genderless"></i>'
+    }, {
+        key_id: "YELLOW",
+        card_md: "col-md-3",
+        header_class: "bg-warning",
+        name: '<i class="fas fa-genderless"></i>'
+    }, {
+        key_id: "BLUE",
+        card_md: "col-md-3",
+        header_class: "bg-primary",
+        name: '<i class="fas fa-genderless"></i>'
+    }],
+    optionalKeys: [{
+        key_id: "PUP",
+        card_md: "col-md-2",
+        header_class: "",
+        name: "P+"
+    }, {
+        key_id: "PDOWN",
+        card_md: "col-md-2",
+        header_class: "",
+        name: "P-"
+    }, {
+        key_id: "INFO",
+        card_md: "col-md-3",
+        header_class: "",
+        name: "INFO"
+    }, {
+        key_id: "SUBTITLE",
+        card_md: "col-md-3",
+        header_class: "",
+        name: "AD/SUBTITLE"
+    }, {
+        key_id: "CHLIST",
+        card_md: "col-md-2",
+        header_class: "",
+        name: "CHLIST"
+    }],
+    mediaKeys: [{
+        key_id: "PLAY",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-play"></i>'
+    }, {
+        key_id: "PAUSE",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-pause"></i>'
+    }, {
+        key_id: "STOP",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-stop"></i>'
+    }, {
+        key_id: "FF",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-forward"></i>'
+    }, {
+        key_id: "RW",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-backward"></i>'
+    }, {
+        key_id: "PLAY_PAUSE",
+        card_md: "col-md-2",
+        header_class: "",
+        name: '<i class="fas fa-play"></i> <i class="fas fa-pause"></i>'
+    }],
+    numbersKeys: [{
+        key_id: "ZERO",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "0"
+    }, {
+        key_id: "ONE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "1"
+    }, {
+        key_id: "TWO",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "2"
+    }, {
+        key_id: "THREE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "3"
+    }, {
+        key_id: "FOUR",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "4"
+    }, {
+        key_id: "FIVE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "5"
+    }, {
+        key_id: "SIX",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "6"
+    }, {
+        key_id: "SEVEN",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "7"
+    }, {
+        key_id: "EIGHT",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "8"
+    }, {
+        key_id: "NINE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "9"
+    }, {
+        key_id: "SPACE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "#"
+    }, {
+        key_id: "NONE",
+        card_md: "col-md-1",
+        header_class: "",
+        name: "?"
+    }]
+};

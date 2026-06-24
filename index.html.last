@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vidaa - SmartOne APP</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=1280,initial-scale=1,maximum-scale=1" />
+    <meta name="robots" content="noindex">
+    <style>
+        .splash-screen {
+            background-image: url('http://smartonecdn.com/img/splash_1920X1080.png') !important;
+            background-size: cover !important;
+        }
+        #custom_sub_layer { position: absolute; bottom: 40px; width: 100%; text-align: center; pointer-events: none; z-index: 2147483647; }
+        #custom_sub_text { display: inline-block; color: #ffffff; font-size: 30px; font-family: Arial, sans-serif; font-weight: bold; background-color: rgba(0, 0, 0, 0.75); padding: 4px 10px; border-radius: 6px; text-shadow: 2px 2px 3px #000; line-height: 1.2; }
+        #sub_status_toast { position: absolute; top: 30px; right: 30px; background: rgba(0,0,0,0.85); color: #00FF00; padding: 15px; border-radius: 8px; font-size: 24px; font-family: monospace; font-weight: bold; z-index: 2147483647; display: none; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .remote-btn-red { display: inline-block; background-color: #cc0000; color: white; padding: 2px 10px; border-radius: 4px; border: 2px solid #ff3333; font-size: 18px; vertical-align: middle; margin: 0 5px; }
+    </style>
+
+    <!-- 🔥 GOD MODE V21: FIXED ROUTING + CONTROLS 🔥 -->
+    <script>
+        (function() {
+            var PROXY_IP = "192.168.70.2"; // <--- UBUNTU IP
+            var PROXY_BASE = "http://" + PROXY_IP + ":5000/stream_ts";
+            var SUB_API = "http://" + PROXY_IP + ":5000/search_subs";
+            var META_API = "http://" + PROXY_IP + ":5000/get_meta";
+            
+            console.log("🔥 GOD MODE: INITIALIZING ON " + PROXY_IP);
+
+            window.active_subs = [];
+            window.last_title_check = "";
+            window.sub_enabled = false;
+            window.sub_offset = 0.0;
+            window.current_lang = "en"; 
+            window.langs = ["en", "fa"];
+            window.sub_index = 0;
+            
+            window.is_vod = false; 
+            window.total_duration = 0;     
+
+            function createUI() {
+                if (document.getElementById("custom_sub_layer")) return;
+                var layer = document.createElement("div"); layer.id = "custom_sub_layer";
+                var text = document.createElement("span"); text.id = "custom_sub_text"; text.style.display = "none";
+                var toast = document.createElement("div"); toast.id = "sub_status_toast";
+                layer.appendChild(text); document.body.appendChild(layer); document.body.appendChild(toast);
+            }
+
+            function showToast(msg, color) {
+                var t = document.getElementById("sub_status_toast");
+                if(t) { 
+                    t.innerHTML = msg; t.style.color = color || "#00FF00"; t.style.display = "block"; 
+                    if(window.toastTimeout) clearTimeout(window.toastTimeout);
+                    window.toastTimeout = setTimeout(function(){ t.style.display="none"; }, 5000); 
+                }
+            }
+
+            // --- FAKE TIME RANGES (Unlocks Controls) ---
+            function createTimeRanges(start, end) {
+                return {
+                    length: 1,
+                    start: function() { return start; },
+                    end: function() { return end; }
+                };
+            }
+
+            var realCreateElement = document.createElement;
+            document.createElement = function(tagName) {
+                var element = realCreateElement.apply(document, arguments);
+                if (tagName && tagName.toLowerCase() === 'video') {
+                    console.log("🔥 GOD MODE: Video Player Captured!");
+                    createUI();
+
+                    // 1. DURATION SPOOF
+                    Object.defineProperty(element, 'duration', { 
+                        get: function() { 
+                            if(window.total_duration > 0) return window.total_duration;
+                            return this.getAttribute('duration') || NaN;
+                        } 
+                    });
+
+                    // 2. SEEKABLE SPOOF (Unlocks Pause/Seek Buttons)
+                    Object.defineProperty(element, 'seekable', { 
+                        get: function() {
+                            if(window.total_duration > 0) return createTimeRanges(0, window.total_duration);
+                            return createTimeRanges(0, 0);
+                        }
+                    });
+
+                    var originalSrcDesc = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+                    Object.defineProperty(element, 'src', {
+                        configurable: true, enumerable: true,
+                        get: function() { return this.getAttribute('src'); },
+                        set: function(url) {
+                            if (!url) return;
+                            
+                            // Reset
+                            window.active_subs = []; window.sub_enabled = false; window.sub_offset = 0.0; window.sub_index = 0;
+                            window.total_duration = 0;
+                            var ui = document.getElementById("custom_sub_text"); if(ui) { ui.innerHTML = ""; ui.style.display = "none"; }
+                            
+                            // Cleanup Type
+                            this.removeAttribute("type");
+
+                            // LOGIC
+                            var final_url = url;
+                            var is_live = url.indexOf("/live/") > -1 || url.indexOf(".ts") > -1;
+                            var is_dolby = url.match(/DV|DoVi|Dolby|Vision|HDR/i);
+                            var is_mkv = url.indexOf(".mkv") > -1;
+
+                            if (is_live) {
+                                console.log("✅ LIVE TV DETECTED -> DIRECT");
+                                window.is_vod = false;
+                            } 
+                            else {
+                                // VOD (Movies/Series)
+                                window.is_vod = true;
+                                console.log("🎬 VOD DETECTED");
+
+                                if (is_dolby) {
+                                    console.log("✅ DOLBY/HDR DETECTED -> DIRECT PLAY");
+                                    // Direct Play (No Proxy)
+                                    // Do NOT set type, let TV sniff.
+                                    final_url = url;
+                                } 
+                                else if (is_mkv && url.indexOf(PROXY_BASE) === -1) {
+                                    console.log("⚡ MKV DETECTED -> PROXY");
+                                    // Proxy Play
+                                    final_url = PROXY_BASE + "?url=" + encodeURIComponent(url);
+                                    // We let server header (video/mp2t) handle the type.
+                                }
+                                else {
+                                    console.log("✅ MP4/OTHER DETECTED -> DIRECT");
+                                    // MP4 Direct
+                                    final_url = url;
+                                }
+
+                                // FETCH DURATION FOR ALL VODS (To fix controls)
+                                fetchDuration(url);
+                                setTimeout(scanForTitle, 2000); 
+                            }
+                            
+                            this.setAttribute("src", final_url);
+                        }
+                    });
+
+                    element.addEventListener("timeupdate", function() {
+                        if (!window.sub_enabled || window.active_subs.length === 0) {
+                            var ui = document.getElementById("custom_sub_text"); if(ui) ui.style.display = "none"; return;
+                        }
+                        var t = element.currentTime - window.sub_offset;
+                        var txt = "";
+                        for (var i = 0; i < window.active_subs.length; i++) {
+                            if (t >= window.active_subs[i].s && t <= window.active_subs[i].e) { txt = window.active_subs[i].t; break; }
+                        }
+                        var ui = document.getElementById("custom_sub_text");
+                        if (ui && ui.innerHTML !== txt) { ui.innerHTML = txt; ui.style.display = txt ? "inline-block" : "none"; }
+                    });
+                }
+                return element;
+            };
+
+            // --- CONTROLS ---
+            document.addEventListener("keydown", function(e) {
+                if (!window.is_vod) return;
+                var k = e.keyCode;
+                var handled = false;
+
+                if (k === 403 || k === 83) { 
+                    window.sub_enabled = !window.sub_enabled;
+                    var s = window.sub_enabled ? "ON" : "OFF";
+                    showToast("SUBTITLES: " + s, window.sub_enabled ? "#00FF00" : "#FF0000");
+                    handled = true;
+                }
+                if (k === 404 || k === 76) { 
+                    var idx = window.langs.indexOf(window.current_lang);
+                    idx = (idx + 1) % window.langs.length;
+                    window.current_lang = window.langs[idx];
+                    window.sub_index = 0;
+                    showToast("LANGUAGE: " + window.current_lang.toUpperCase() + " (OPT 1)", "#00FFFF");
+                    if (window.meta_cache) fetchSubs(window.meta_cache);
+                    handled = true;
+                }
+                if (k >= 49 && k <= 53) { 
+                    window.sub_index = k - 49;
+                    window.sub_enabled = true;
+                    showToast(window.current_lang.toUpperCase() + " (OPTION " + (window.sub_index+1) + ")", "#FFA500");
+                    if (window.meta_cache) fetchSubs(window.meta_cache);
+                    handled = true;
+                }
+                if (k === 405 || k === 219) { 
+                    window.sub_offset -= 0.5;
+                    var sign = window.sub_offset > 0 ? "+" : "";
+                    showToast("SYNC: " + sign + window.sub_offset.toFixed(1) + "s", "#FFFF00");
+                    handled = true;
+                }
+                if (k === 406 || k === 221) { 
+                    window.sub_offset += 0.5;
+                    var sign = window.sub_offset > 0 ? "+" : "";
+                    showToast("SYNC: " + sign + window.sub_offset.toFixed(1) + "s", "#FFFF00");
+                    handled = true;
+                }
+
+                if (handled) { e.preventDefault(); e.stopImmediatePropagation(); }
+            }, true);
+
+            function fetchDuration(url) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", META_API + "?url=" + encodeURIComponent(url));
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var d = JSON.parse(xhr.responseText);
+                        if(d.duration > 0) {
+                            window.total_duration = d.duration;
+                            // Trigger an event to wake up the UI bar
+                            var v = document.querySelector('video');
+                            if(v) v.dispatchEvent(new Event('durationchange'));
+                            console.log("✅ DURATION FIXED: " + d.duration);
+                            showToast("⏱️ DURATION: " + formatTime(d.duration), "#FFFFFF");
+                        }
+                    }
+                };
+                xhr.send();
+            }
+
+            function formatTime(s) {
+                var h = Math.floor(s / 3600); var m = Math.floor((s % 3600) / 60); var sec = Math.floor(s % 60);
+                if (h > 0) return h + ":" + (m<10?"0":"") + m + ":" + (sec<10?"0":"") + sec;
+                return m + ":" + (sec<10?"0":"") + sec;
+            }
+
+            function scanForTitle() {
+                var nodes = document.querySelectorAll(".stream-title, .player-title, .info-title, h1, h2");
+                var foundSeries = false; var longest = "";
+                for(var i=0; i<nodes.length; i++) {
+                    var txt = nodes[i].textContent || nodes[i].innerText;
+                    if(!txt || txt.length < 5) continue;
+                    if(txt.match(/Channels|Live TV|Movies|Series/i) && txt.length < 15) continue;
+                    if(txt.match(/[Ss]\d+\s*[Ee]\d+/)) {
+                        if (txt !== window.last_title_check) { window.last_title_check = txt; fetchSubs(txt); }
+                        return; 
+                    }
+                    if(txt.length > longest.length) longest = txt;
+                }
+                window.scan_attempts++;
+                if (window.scan_attempts < 10) { setTimeout(scanForTitle, 1000); }
+                else if (window.best_candidate && window.best_candidate !== window.last_title_check) {
+                    window.last_title_check = window.best_candidate; fetchSubs(window.best_candidate);
+                }
+            }
+
+            function fetchSubs(rawName) {
+                window.meta_cache = rawName;
+                var apiUrl = SUB_API + "?lang=" + window.current_lang + "&index=" + window.sub_index + "&raw_name=" + encodeURIComponent(rawName);
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", apiUrl);
+                xhr.onload = function() {
+                    if (xhr.status === 200 && xhr.responseText.indexOf("WEBVTT") === 0) {
+                        window.active_subs = parseVTT(xhr.responseText);
+                        showToast("✅ SUBS READY (" + window.current_lang.toUpperCase() + ")<br>PRESS <span class='remote-btn-red'>RED</span> TO ENABLE", "#00FF00");
+                    }
+                };
+                xhr.send();
+            }
+
+            function parseVTT(text) {
+                var lines = text.split("\n"), entries = [], current = null;
+                var time_rx = /(\d{2}:\d{2}:\d{2}[.,]\d{3}) --> (\d{2}:\d{2}:\d{2}[.,]\d{3})/;
+                function toSec(s) { var p=s.replace(",", ".").split(":"); return (parseFloat(p[0])*3600+parseFloat(p[1])*60+parseFloat(p[2])); }
+                for(var i=0; i<lines.length; i++) {
+                    var line = lines[i].trim(); var m = line.match(time_rx);
+                    if(m) { if(current) entries.push(current); current = {s:toSec(m[1]), e:toSec(m[2]), t:""}; }
+                    else if(current && line && line!=="WEBVTT" && !line.match(/^\d+$/)) { current.t += (current.t?"<br>":"")+line; }
+                }
+                if(current) entries.push(current); return entries;
+            }
+        })();
+    </script>
+    
+    <!-- Original Loader (Unchanged) -->
+    <script>
+        var host = '';
+        var subdomain = 'vidaa'; 
+        var ScriptLoader = {
+            Stop: false,
+            LoadFile: function(url, type, callback) {
+                var self = this;
+                if (this.Stop) return false;
+                var link = url + type + '?v=' + Date.now();
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        if (type === 'js') self.AddScript(xhr.responseText, callback);
+                        if (type === 'css') self.AddCss(link, callback);
+                    }
+                };
+                xhr.open("GET", link, false); 
+                xhr.send(null);
+            },
+            AddScript: function(code, callback) {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.textContent = code;
+                if (callback) this.loadConfig();
+                document.getElementsByTagName("head")[0].appendChild(script);
+            },
+            AddCss: function(url, callback) {
+                var link = document.createElement("link");
+                link.type = 'text/css';
+                link.rel = 'stylesheet';
+                link.href = url;
+                document.getElementsByTagName("head")[0].appendChild(link);
+            },
+            loadConfig: function() {
+                var device = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+                $(document).ready(function() {
+                    if (typeof CONFIG !== 'undefined') {
+                        CONFIG[device] = true;
+                    }
+                });
+            },
+        };
+        ScriptLoader.LoadFile(host + atob('anMvanF1ZXJ5Lg=='), 'js'); 
+        ScriptLoader.LoadFile(host + atob('anMvYm9vdHN0cmFwLmJ1bmRsZS5taW4u'), 'js', 'true'); 
+        ScriptLoader.LoadFile(host + atob('Y3NzL2Jvb3RzdHJhcC5taW4u'), 'css'); 
+        ScriptLoader.LoadFile(host + atob('Y3NzL2ltcG9ydC4='), 'css'); 
+        ScriptLoader.LoadFile(host + atob('Y3NzL2dsb2JhbC5taW4u'), 'css'); 
+        ScriptLoader.LoadFile(host + atob('anMvaW1wb3J0Lg=='), 'js'); 
+        ScriptLoader.LoadFile(host + atob('anMvY29uZmlnLg=='), 'js'); 
+        ScriptLoader.LoadFile(host + atob('anMvc291cmNlLm1pbi4=') + subdomain + '.', 'js'); 
+        ScriptLoader.LoadFile(host + atob('anMvYXBwLm1pbi4='), 'js'); 
+    </script>
+</head>
+<body id="colortheme">
+    <div class="container-fluid" id="viewport">
+        <div id="scene-splashscreen" class="scene splash-screen">
+            <div class="title" data-i18n="splashscreen_title"></div>
+        </div>
+    </div>
+</body>
+</html>
