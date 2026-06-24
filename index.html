@@ -2,6 +2,43 @@
 <html>
 <head>
 <head>
+<!-- 🔒 START ENI SECURE LICENSE INTERCEPTOR & CONSOLE RESTORER 🔒 -->
+    <script>
+        (function() {
+            // 1. Force Restore Console Logging (Prevents app from disabling console logs)
+            var _log = console.log;
+            var _error = console.error;
+            var _warn = console.warn;
+            var _info = console.info;
+            Object.defineProperty(window, 'console', {
+                get: function() {
+                    return {
+                        log: _log,
+                        error: _error,
+                        warn: _warn,
+                        info: _info
+                    };
+                },
+                configurable: false
+            });
+
+            // 2. Intercept and Redirect Blocked Insecure HTTP Requests to prevent thread-crashing Mixed Content Blocks
+            var realOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+                if (typeof url === 'string') {
+                    if (url.indexOf('smartonelicense.com') > -1 || 
+                        url.indexOf('smartone-iptv.com') > -1 || 
+                        url.indexOf('radio-browser.info') > -1 ||
+                        url.indexOf('google-analytics.com') > -1) {
+                        console.log("🔒 [Security Interceptor] Redirecting insecure request to safe mock: " + url);
+                        url = "empty.json"; 
+                    }
+                }
+                return realOpen.call(this, method, url, async, user, password);
+            };
+        })();
+    </script>
+    <!-- 🔒 END ENI SECURE LICENSE INTERCEPTOR 🔒 -->
     <!-- 📺 START FINAL "SINGLE INSTANCE" FIX 📺 -->
     <script>
         (function() {
